@@ -1,0 +1,1 @@
+//! Contains all hash modules

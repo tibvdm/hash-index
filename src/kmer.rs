@@ -8,6 +8,11 @@ impl Kmer {
     pub fn new(kmer: u64) -> Kmer {
         Kmer(kmer)
     }
+
+    /// k-mer to bytes
+    pub fn to_be_bytes(&self) -> [u8; 8] {
+        self.0.to_be_bytes()
+    }
 }
 
 impl From<&str> for Kmer {

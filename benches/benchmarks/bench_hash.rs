@@ -25,7 +25,7 @@ fn bench(c: &mut Criterion) {
     );
 }
 
-fn more_measurement_time() -> Criterion {
+fn custom_criterion_config() -> Criterion {
     Criterion::default()
         .measurement_time(Duration::from_secs(60))
         .sample_size(1_000)
@@ -33,6 +33,6 @@ fn more_measurement_time() -> Criterion {
 
 criterion_group!(
     name = benches;
-    config = more_measurement_time();
+    config = custom_criterion_config();
     targets = bench
 );

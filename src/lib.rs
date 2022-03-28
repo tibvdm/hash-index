@@ -9,6 +9,7 @@ extern crate error_chain;
 #[macro_use]
 extern crate structopt;
 
+pub mod benches;
 pub mod commands;
 pub mod hash;
 pub mod errors;

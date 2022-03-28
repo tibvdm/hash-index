@@ -12,6 +12,11 @@ pub struct BuildIndexArgs {
 
 /// Implements the buildindex command
 pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
-    let test: Kmer = Kmer::from("ACD");
+    let test: Kmer = Kmer::from("ACDFFYADD");
+
+    let s: String = Kmer::into(test);
+
+    println!("{}", s);
+
     Ok(())
 }

@@ -46,3 +46,40 @@ impl From<&str> for Kmer {
         Kmer(u64_repr)
     }
 }
+
+impl From<Kmer> for String {
+    /// Create a string from a k-mer
+    fn from(kmer: Kmer) -> Self {
+        let mut string: String = "".to_string();
+
+        for i in 0 .. 9 {
+            string.push(
+                match kmer.0 >> (i * 5) & 0x1F {
+                0  => 'A',
+                1  => 'C',
+                2  => 'D',
+                3  => 'E',
+                4  => 'F',
+                5  => 'G',
+                6  => 'H',
+                7  => 'I',
+                8  => 'K',
+                9  => 'L',
+                10 => 'M',
+                11 => 'N',
+                12 => 'P',
+                13 => 'Q',
+                14 => 'R',
+                15 => 'S',
+                16 => 'T',
+                17 => 'V',
+                18 => 'W',
+                19 => 'Y',
+                _  => ' ' // TODO: error handle this
+                }
+            );
+        }
+
+        string
+    }
+}

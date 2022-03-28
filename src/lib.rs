@@ -11,3 +11,4 @@ extern crate structopt;
 
 pub mod commands;
 pub mod errors;
+pub mod kmer;

@@ -1,5 +1,7 @@
 //! Command to build the index structure
 
+use crate::kmer::Kmer;
+
 use crate::errors::Result;
 
 /// Arguments to build an index
@@ -10,5 +12,6 @@ pub struct BuildIndexArgs {
 
 /// Implements the buildindex command
 pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
+    let test: Kmer = Kmer::from("ACD");
     Ok(())
 }

@@ -1,6 +1,9 @@
 //! K-mer module
 
+use rand::distributions::{Distribution, Uniform};
+
 /// K-mer represented as an u64
+#[derive(Clone, PartialEq, Debug)]
 pub struct Kmer(u64);
 
 impl Kmer {
@@ -87,4 +90,12 @@ impl From<Kmer> for String {
 
         string
     }
+}
+
+/// Generate a list of k-mers
+pub fn generate_kmers(n: usize) -> Vec<Kmer> {
+    let distribution = Uniform::<u64>::from(0 .. 512_000_000_000);
+    let mut rng = rand::thread_rng();
+
+    return (0 .. n).map(|_| Kmer::new(distribution.sample(&mut rng))).collect();
 }

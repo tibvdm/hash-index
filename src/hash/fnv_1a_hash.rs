@@ -2,6 +2,7 @@
 
 use crate::kmer::Kmer;
 
+/// Struct for an FNV Hasher
 pub struct Fnv1aHasher32();
 
 impl Fnv1aHasher32 {

@@ -1,18 +1,38 @@
 //! All functionality to benchmark hash functions
 
-use criterion::{criterion_group, criterion_main, Criterion};
-use rand::distributions::{Distribution, Uniform};
+use criterion::{criterion_group, Criterion};
+use core::time::Duration;
 
 use hash_index::hash::fnv_1a_hash::Fnv1aHasher32;
+use hash_index::kmer::Kmer;
+use hash_index::kmer;
 
 /// Benchmark a hash function
-fn bench_hash(kmers: &Vec<u64>) {
-    // TODO
+fn bench_hash(kmers: &Vec<Kmer>) {
+    let hasher = Fnv1aHasher32();
+
+    for kmer in kmers {
+        hasher.hash(kmer);
+    }
 }
 
+/// TODO
 fn bench(c: &mut Criterion) {
-    // c.bench_function("bench_hash",
-    //     |b| b.iter_with_setup());
+    let kmers: Vec<Kmer> = kmer::generate_kmers(1_000_000);
+
+    c.bench_function("bench_hash",
+        |b| b.iter_with_setup(|| kmers.to_vec(), |kmers| bench_hash(&kmers))
+    );
 }
 
-criterion_group!(benches, bench);
+fn more_measurement_time() -> Criterion {
+    Criterion::default()
+        .measurement_time(Duration::from_secs(60))
+        .sample_size(1_000)
+}
+
+criterion_group!(
+    name = benches;
+    config = more_measurement_time();
+    targets = bench
+);

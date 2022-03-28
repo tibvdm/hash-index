@@ -10,5 +10,6 @@ extern crate error_chain;
 extern crate structopt;
 
 pub mod commands;
+pub mod hash;
 pub mod errors;
 pub mod kmer;

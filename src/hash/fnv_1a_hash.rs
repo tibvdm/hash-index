@@ -23,7 +23,7 @@ impl Fnv1aHasher32 {
         hashed_value
     }
 
-    /// TODO
+    /// Computes the hash for a k-mer, but faster
     pub fn hash_optimized(&self, kmer: &Kmer) -> u32 {
         let mut hashed_value: u32 = 0x811c9dc5;
 

@@ -4,7 +4,7 @@ use rand::distributions::{Distribution, Uniform};
 
 /// K-mer represented as an u64
 #[derive(Clone, PartialEq, Debug)]
-pub struct Kmer(u64);
+pub struct Kmer(pub u64);
 
 impl Kmer {
     /// Create a new k-mer

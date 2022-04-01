@@ -1,13 +1,16 @@
 //! TODO
 
+use crate::serialization::Serialize;
+
+/// TODO
 pub struct GoTerm();
 
 impl Serialize for GoTerm {
-    pub fn serialize() {
+    fn serialize(&self) {
 
     }
 
-    pub fn deserialize() {
+    fn deserialize() {
         
     }
 }

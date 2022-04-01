@@ -1,13 +1,16 @@
 //! TODO
 
+use crate::serialization::Serialize;
+
+/// TODO
 pub struct InterproEntry();
 
 impl Serialize for InterproEntry {
-    pub fn serialize() {
+    fn serialize(&self) {
 
     }
 
-    pub fn deserialize() {
+    fn deserialize() {
         
     }
 }

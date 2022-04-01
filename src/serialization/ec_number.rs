@@ -1,13 +1,16 @@
 //! TODO
 
+use crate::serialization::Serialize;
+
+/// TODO
 pub struct EcNumber();
 
 impl Serialize for EcNumber {
-    pub fn serialize() {
+    fn serialize(&self) {
 
     }
 
-    pub fn deserialize() {
+    fn deserialize() {
         
     }
 }

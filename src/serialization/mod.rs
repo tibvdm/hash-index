@@ -1,9 +1,9 @@
 //! TODO
 
 trait Serialize {
-    fn serialize(&self) -> [u8];
+    fn serialize(&self);
     
-    fn deserialize(&[u8]) -> [self];
+    fn deserialize();
 }
 
 pub mod ec_number;

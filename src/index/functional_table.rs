@@ -1,10 +1,11 @@
 //! TODO: Serialized Functional data table
 
 use crate::serialization::Serialize;
+use crate::serialization::uniprot_id::UniprotId;
 
 // TODO
 
-// TODO: SErialize uniprot ids to bytestring
+// TODO: Serialize uniprot ids to bytestring
 // TODO: Write this string to a file 
 
 // TODO: eerst zonder serialization
@@ -25,13 +26,23 @@ impl FunctionalTable {
     }
 
     /// TODO: -> Result
-    pub fn insert(&mut self/*, data: &dyn Serialize<Output=[u8]>*/) {
-        // TODO: serialize data
+    pub fn insert(&mut self, data: &Vec<UniprotId>) -> u32 {
+        let mut serialized_vec: Vec<u8> = Vec::new();
+
+        // TODO: add LCA
+
+        for uid in data {
+            let serialized = uid.serialize();
+
+            for byte in serialized {
+                serialized_vec.push(byte);
+            }
+        }
         
         // Store data in struct or write directly to file
 
-        println!("{}", self.entry_counter);
-
         self.entry_counter += 1;
+
+        return self.entry_counter - 1;
     }
 }

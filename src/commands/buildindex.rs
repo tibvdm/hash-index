@@ -37,6 +37,10 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
         let ftable_index = ftable.insert(&uids_vec);
 
         println!("{}", ftable_index);
+
+        // TODO: lca is the taxonomic information
+        // TODO: ftable_index is the function pointer
+        // TODO: hash(kmer)
     }
 
     Ok(())

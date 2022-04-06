@@ -1,5 +1,7 @@
 //! Command to build the index structure
 
+use crate::index::functional_table::FunctionalTable;
+
 use crate::kmer::Kmer;
 
 use crate::errors::Result;
@@ -12,11 +14,10 @@ pub struct BuildIndexArgs {
 
 /// Implements the buildindex command
 pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
-    let test: Kmer = Kmer::from("ACDFFYADD");
+    let mut ftable = FunctionalTable::new();
 
-    let s: String = Kmer::into(test);
-
-    println!("{}", s);
+    ftable.insert();
+    ftable.insert();
 
     Ok(())
 }

@@ -27,11 +27,8 @@ impl BowtieIndex {
 
     /// TODO
     pub fn search(&self, kmer: &Kmer) -> u32 {
-        // TODO: implement log_search
-    }
-
-    /// TODO
-    fn log_search(&self, kmer: &Kmer) -> u32 {
-
+        // Search the k-mer in the hash table
+        let fpointer: u32 = self.hash_table.get(kmer);
+        // TODO: determine wheter we want to ask the csv for all the information?
     }
 }

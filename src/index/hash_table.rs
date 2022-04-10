@@ -72,9 +72,6 @@ impl HashTable {
             // Add the new conflict to the list
             self.stack[first_conflict_index].push(entry);
         }
-
-        println!("{:?}", self.buckets);
-        println!("{:?}", self.stack);
     }
 
     /// TODO
@@ -104,12 +101,6 @@ impl HashTable {
     fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
         let mut lower: i32 = 0;
         let mut upper: i32 = self.stack[first_conflict_index].len() as i32 - 1;
-
-        println!("{}", lower);
-        println!("{}", upper);
-
-        println!("{:?}", self.stack[first_conflict_index]);
-        println!("{:?}", kmer);
 
         while lower <= upper {
             let middle: i32 = (lower + upper) / 2;

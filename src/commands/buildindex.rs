@@ -52,5 +52,7 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
 
     println!("{:?}", hash_table.get(&Kmer::from("AAAAAAACA")));
 
+    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAGA")));
+
     Ok(())
 }

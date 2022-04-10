@@ -3,7 +3,7 @@
 use std::io;
 
 use crate::index::functional_table::FunctionalTable;
-use crate::index::hash_table::HashTable;
+use crate::index::conflict_table::ConflictTable;
 use crate::serialization::uniprot_id::UniprotId;
 
 use crate::kmer::Kmer;
@@ -27,7 +27,7 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
 
     let mut ftable = FunctionalTable::new();
 
-    let mut hash_table = HashTable::new(1);
+    let mut hash_table = ConflictTable::new(1);
 
     for record in reader.deserialize() {
         let (kmer, lca, uids): (String, u32, String) = record?;
@@ -53,6 +53,10 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
     println!("{:?}", hash_table.get(&Kmer::from("AAAAAAACA")));
 
     println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAGA")));
+
+    println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAACA")));
+    
+    println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAAGA")));
 
     Ok(())
 }

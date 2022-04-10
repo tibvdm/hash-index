@@ -10,6 +10,10 @@ pub struct BowtieIndex {
     functional_table: FunctionalTable
 }
 
+// TODO: Is opsplitsen echt nodig?
+// Buildindex voor het bouwen van de indexstructuur
+// Ander command voor het bevragen van de structuur.
+
 impl BowtieIndex {
     /// TODO
     pub fn new() -> BowtieIndex {

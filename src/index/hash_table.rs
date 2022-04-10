@@ -1,6 +1,8 @@
 //! TODO: First hashing that distributes the k-mers to less buckets
 
 use crate::hash::fnv_1a_hash::Fnv1aHasher32;
+use crate::kmer::Kmer;
+use crate::errors::Result;
 
 // TODO: how about we give the ftable ordening to the hashtable, then this list can be updated in place
 // Then later we use this list to write to a csv file in the correct order.
@@ -26,9 +28,12 @@ pub struct HashTable {
 
 impl HashTable {
     /// TODO
-    pub fn new() -> HashTable {
+    pub fn new(amount_of_buckets: usize) -> HashTable {
         HashTable {
-            hasher: Fnv1aHasher32::new()
+            hasher: Fnv1aHasher32::new(),
+            amount_of_buckets: amount_of_buckets,
+            buckets: vec![0; amount_of_buckets],
+            stack: vec![]
         }
     }
 
@@ -38,55 +43,50 @@ impl HashTable {
         // Then we can reorder the function table to represent this order
         // Then fp = bucket_index + offset_first_conflict
 
-        let bucket = self.hasher.hash(kmer);
+        let bucket: usize = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
 
         // The bucket contains the position of the first conflict
-        let first_conflict_index = self.buckets[bucket]
+        let mut first_conflict_index: usize = self.buckets[bucket] as usize;
 
         // This is the first hit for our bucket
-        // TODO: WILL NEVER BE -1, BECAUSE THIS IS AN UNSIGNED INTEGER 32
-        // SOLUTION: Add 1 extra if that will only be executed once, then branching will get rid of this case.
-        if first_conflict_index == -1 {
-            // Prepare the entry to be pushed (#conflicts in last 19 bits).
-            let entry: u64 = kmer.0 | 0x0000200000000000;
+        if first_conflict_index == 0 {
+            // Prepare the entry to be pushed.
+            let entry: u64 = kmer.0;
 
             // add the entry to the list
             self.stack.push(vec![entry]);
 
             // Store the index of this conflict in the bucket
-            self.buckets[bucket] = self.stack.length() - 1;
+            self.buckets[bucket] = self.stack.len() as u32;
         }
 
         // This is a conflict for our bucket
         else {
+            // Because 0 represents an empty bucket
+            // 1 represents the first bucket. So 1 -> 0, 2 -> 1, ...
+            first_conflict_index -= 1;
+
             // prepare entry to be pushed
             let entry: u64 = kmer.0;
-
-            // Retrieve the first conflict
-            let first_conflict: u64 = self.stack[first_conflict_index];
-
-            // Retrieve the amount of conflicts for this bucket so far
-            let amount_of_conflicts: u64 = first_conflict >> 45;
-
-            // Update the count of conflicts
-            amount_of_conflicts += 1;
-            self.stack[first_conflict_index][0] = first_conflict & 0x00001FFFFFFFFFFF | amount_of_conflicts << 45;
 
             // Add the new conflict to the list
             self.stack[first_conflict_index].push(entry);
         }
+
+        println!("{:?}", self.buckets);
+        println!("{:?}", self.stack);
     }
 
     /// TODO
     pub fn get(&self, kmer: &Kmer) -> Result<u32> {
         // Calculate the bucket of this k-mer
-        let bucket = self.hasher.hash(kmer);
+        let bucket = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
 
         // Retrieve the position of the first conflict
-        let first_conflict_index = self.buckets[bucket]
+        let first_conflict_index: usize = self.buckets[bucket] as usize;
 
         // Perform a logarithmic search to find the correct entry
-        Ok(log_search(kmer, first_conflict_index))
+        self.log_search(kmer, first_conflict_index - 1)
     }
 
     /// TODO
@@ -94,24 +94,43 @@ impl HashTable {
         // TODO: order is OK, because we start with an ordered list of kmers ()
         // TODO: place the 2D vector sequentieel in memory
         // TODO: maybe final changes voor de ftable order list
+
+        // TODO: set the amount of conlicts in bucket bits
+        // Set #conflicts to 1 (= 0x0000200000000000)
+        // Clear #conflicts (= 0x00001FFFFFFFFFFF)
+        // Shift #conflicst to 19 bits (amount_of_conflicts << 45)
     }
 
-    fn log_search(&self, kmer: &Kmer, first_conflict_index: u32) -> Result<u32> {
-        let lower: u32 = 0;
-        let upper: u32 = len(self.stack[first_conflict_index]) - 1;
+    fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
+        let mut lower: i32 = 0;
+        let mut upper: i32 = self.stack[first_conflict_index].len() as i32 - 1;
 
-        while lower < upper {
-            let middle: u32 = (lower + upper) / 2;
-            if self.stack[first_conflict_index][middle] < kmer.0 {
+        println!("{}", lower);
+        println!("{}", upper);
+
+        println!("{:?}", self.stack[first_conflict_index]);
+        println!("{:?}", kmer);
+
+        while lower <= upper {
+            let middle: i32 = (lower + upper) / 2;
+            if self.stack[first_conflict_index][middle as usize] < kmer.0 {
                 lower = middle + 1;
-            } else if self.stack[first_conflict_index][middle] > kmer.0 {
+            } else if self.stack[first_conflict_index][middle as usize] > kmer.0 {
                 upper = middle - 1;
             } else {
-                Ok(first_conflict_index + middle)
+                return Ok((first_conflict_index as i32 + middle) as u32);
             }
         }
 
-        // TODO throw error
-        Ok(0)
+        bail!("Entry not found")
     }
 }
+
+// error_chain! {
+//     errors {
+//         EntryNotFound() {
+//             description("k-mer could not be found!"), // note the ,
+//             display("k-mer could not be found!"), // trailing comma is allowed
+//         }
+//     }
+// }

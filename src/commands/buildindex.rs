@@ -3,6 +3,7 @@
 use std::io;
 
 use crate::index::functional_table::FunctionalTable;
+use crate::index::hash_table::HashTable;
 use crate::serialization::uniprot_id::UniprotId;
 
 use crate::kmer::Kmer;
@@ -26,6 +27,8 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
 
     let mut ftable = FunctionalTable::new();
 
+    let mut hash_table = HashTable::new(1);
+
     for record in reader.deserialize() {
         let (kmer, lca, uids): (String, u32, String) = record?;
 
@@ -36,12 +39,18 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
 
         let ftable_index = ftable.insert(&uids_vec);
 
-        println!("{}", ftable_index);
+        // println!("{}", ftable_index);
 
         // TODO: lca is the taxonomic information
         // TODO: ftable_index is the function pointer
         // TODO: hash(kmer)
+
+        hash_table.insert(&Kmer::from(kmer));
     }
+
+    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAAA")));
+
+    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAACA")));
 
     Ok(())
 }

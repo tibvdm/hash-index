@@ -4,9 +4,6 @@ use crate::hash::fnv_1a_hash::Fnv1aHasher32;
 use crate::kmer::Kmer;
 use crate::errors::Result;
 
-// TODO: how about we give the ftable ordening to the hashtable, then this list can be updated in place
-// Then later we use this list to write to a csv file in the correct order.
-
 // TODO: Hasher could be static in this case
 
 /// A hash table with uniformly distributed conflicts
@@ -19,8 +16,6 @@ pub struct ConflictTable {
     buckets: Vec<u32>,
     /// The storage for all the conflicts
     stack: Vec<Vec<u64>>,
-
-
     /// TODO: Split in builder and table
     flattened_stack: Vec<u64>
 }

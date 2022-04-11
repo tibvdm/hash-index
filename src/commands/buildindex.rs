@@ -37,7 +37,7 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
             .map(|s| UniprotId::new(s.trim().parse().unwrap()))
             .collect();
 
-        let ftable_index = ftable.insert(&uids_vec);
+        let ftable_index = ftable.insert(1, &uids_vec);
 
         // println!("{}", ftable_index);
 
@@ -55,7 +55,7 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
     println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAGA")));
 
     println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAACA")));
-    
+
     println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAAGA")));
 
     Ok(())

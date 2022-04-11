@@ -32,8 +32,8 @@ impl ConflictTable {
         }
     }
 
-    /// Insert a kmer in the conflict table
-    pub fn insert(&mut self, kmer: &Kmer) {
+    /// Insert a kmer in the conflict table, returns the bucket and number of conflict
+    pub fn insert(&mut self, kmer: &Kmer) -> (usize, usize) {
         let bucket: usize = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
 
         // The bucket contains the position of the first conflict
@@ -63,6 +63,8 @@ impl ConflictTable {
             // Add the new conflict to the list
             self.stack[first_conflict_index].push(entry);
         }
+
+        return (bucket, self.stack[first_conflict_index].len() - 1);
     }
 
     /// Get the value for a k-mer

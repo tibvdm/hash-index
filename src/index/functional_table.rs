@@ -14,35 +14,46 @@ use crate::serialization::uniprot_id::UniprotId;
 /// TODO
 pub struct FunctionalTable {
     /// TODO
-    pub entry_counter: u32
+    pub serialized_entries: Vec<Vec<u8>>
 }
 
 impl FunctionalTable {
     /// TODO
     pub fn new() -> FunctionalTable {
         FunctionalTable {
-            entry_counter: 0
+            serialized_entries: vec![]
         }
     }
 
     /// TODO: -> Result
-    pub fn insert(&mut self, data: &Vec<UniprotId>) -> u32 {
+    pub fn insert(&mut self, lca: u32, functional_data: &Vec<UniprotId>) -> u32 {
         let mut serialized_vec: Vec<u8> = Vec::new();
 
-        // TODO: add LCA
+        // Store LCA in the first 32 bits of the serialized information stream
+        serialized_vec.push((lca >> 24) as u8);
+        serialized_vec.push((lca >> 16) as u8);
+        serialized_vec.push((lca >> 8)  as u8);
+        serialized_vec.push( lca        as u8);
 
-        for uid in data {
-            let serialized = uid.serialize();
-
-            for byte in serialized {
+        for uid in functional_data {
+            for byte in uid.serialize() {
                 serialized_vec.push(byte);
             }
         }
         
-        // Store data in struct or write directly to file
+        // Store the functional information
+        self.serialized_entries.push(serialized_vec);
 
-        self.entry_counter += 1;
+        return self.serialized_entries.len() as u32 - 1;
+    }
 
-        return self.entry_counter - 1;
+    /// TODO: error handling
+    pub fn get(&self, functional_pointer: usize) -> &Vec<u8> {
+        &self.serialized_entries[functional_pointer]
+    }
+
+    /// TODO
+    pub fn finish() {
+        // TODO
     }
 }

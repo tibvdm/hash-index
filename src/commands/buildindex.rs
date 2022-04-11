@@ -25,7 +25,7 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
         .delimiter(b',')
         .from_reader(io::stdin());
 
-    let mut conflict_table = ConflictTable::new(1);
+    let mut conflict_table = ConflictTable::new(2);
 
     // Build the conflict table first
     for record in reader.deserialize() {
@@ -53,7 +53,9 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
             .map(|s| UniprotId::new(s.trim().parse().unwrap()))
             .collect();
 
-        ftable.insert(conflict_table.get(&Kmer::from(kmer))? as usize, lca, &uids_vec);
+        let fpointer = conflict_table.get(&Kmer::from(kmer))? as usize;
+
+        ftable.insert(fpointer, lca, &uids_vec);
     }
 
     match conflict_table.get(&Kmer::from("AAAAAAAFA")) {

@@ -33,6 +33,7 @@ impl FunctionalTable {
         self.serialized_entries[i].push((lca >> 8)  as u8);
         self.serialized_entries[i].push( lca        as u8);
 
+        // Store all functional components
         for uid in functional_data {
             for byte in uid.serialize() {
                 self.serialized_entries[i].push(byte);

@@ -18,7 +18,11 @@ pub struct ConflictTable {
     /// The buckets
     buckets: Vec<u32>,
     /// The storage for all the conflicts
-    stack: Vec<Vec<u64>>
+    stack: Vec<Vec<u64>>,
+
+
+    /// TODO: Split in builder and table
+    flattened_stack: Vec<u64>
 }
 
 impl ConflictTable {
@@ -28,7 +32,8 @@ impl ConflictTable {
             hasher: Fnv1aHasher32::new(),
             amount_of_buckets: amount_of_buckets,
             buckets: vec![0; amount_of_buckets],
-            stack: vec![]
+            stack: vec![],
+            flattened_stack: vec![]
         }
     }
 
@@ -88,21 +93,39 @@ impl ConflictTable {
     }
 
     /// TODO
-    pub fn finish() {
-        // TODO: order is OK, because we start with an ordered list of kmers ()
-        // TODO: place the 2D vector sequentieel in memory
-        // TODO: maybe final changes voor de ftable order list
+    pub fn finish(&mut self) {
+        for i in 0 .. self.buckets.len() {
+            let stack_pointer: usize = self.buckets[i] as usize;
+            if stack_pointer != 0 {
+                // Get the stack vector of conflicts
+                let mut stack_entry: Vec<u64> = self.stack[stack_pointer - 1].clone();
 
-        // TODO: set the amount of conlicts in bucket bits
-        // Set #conflicts to 1 (= 0x0000200000000000)
-        // Clear #conflicts (= 0x00001FFFFFFFFFFF)
-        // Shift #conflicst to 19 bits (amount_of_conflicts << 45)
+                // Set amount of conflicts in the first item
+                let amount_of_conflicts: u64 = stack_entry.len() as u64;
+                stack_entry[0] = stack_entry[0] | (amount_of_conflicts << 45);
+
+                // Current length is the index of the first conflict
+                let first_conflict_index: u32 = self.flattened_stack.len() as u32;
+
+                // Add all conflicts to the flattened stack
+                self.flattened_stack.extend(&stack_entry);
+
+                // The bucket now has to point to the first conflict
+                self.buckets[i] = first_conflict_index + 1;
+            }
+        }
+    }
+
+    /// TODO
+    pub fn get_amount_of_kmers(&self) -> usize {
+        self.flattened_stack.len()
     }
 
     /// Logarithmic search for conflicts
     fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
         let mut lower: i32 = 0;
-        let mut upper: i32 = self.stack[first_conflict_index].len() as i32 - 1;
+        //let mut upper: i32 = self.stack[first_conflict_index].len() as i32 - 1;
+        let mut upper: i32 = (self.flattened_stack[first_conflict_index] >> 45) as i32;
 
         while lower <= upper {
             let middle: i32 = (lower + upper) / 2;

@@ -19,41 +19,29 @@ pub struct FunctionalTable {
 
 impl FunctionalTable {
     /// TODO
-    pub fn new() -> FunctionalTable {
+    pub fn new(amount_of_kmers: usize) -> FunctionalTable {
         FunctionalTable {
-            serialized_entries: vec![]
+            serialized_entries: vec![vec![]; amount_of_kmers]
         }
     }
 
     /// TODO: -> Result
-    pub fn insert(&mut self, lca: u32, functional_data: &Vec<UniprotId>) -> u32 {
-        let mut serialized_vec: Vec<u8> = Vec::new();
-
+    pub fn insert(&mut self, i: usize, lca: u32, functional_data: &Vec<UniprotId>) {
         // Store LCA in the first 32 bits of the serialized information stream
-        serialized_vec.push((lca >> 24) as u8);
-        serialized_vec.push((lca >> 16) as u8);
-        serialized_vec.push((lca >> 8)  as u8);
-        serialized_vec.push( lca        as u8);
+        self.serialized_entries[i].push((lca >> 24) as u8);
+        self.serialized_entries[i].push((lca >> 16) as u8);
+        self.serialized_entries[i].push((lca >> 8)  as u8);
+        self.serialized_entries[i].push( lca        as u8);
 
         for uid in functional_data {
             for byte in uid.serialize() {
-                serialized_vec.push(byte);
+                self.serialized_entries[i].push(byte);
             }
         }
-        
-        // Store the functional information
-        self.serialized_entries.push(serialized_vec);
-
-        return self.serialized_entries.len() as u32 - 1;
     }
 
     /// TODO: error handling
     pub fn get(&self, functional_pointer: usize) -> &Vec<u8> {
         &self.serialized_entries[functional_pointer]
-    }
-
-    /// TODO
-    pub fn finish() {
-        // TODO
     }
 }

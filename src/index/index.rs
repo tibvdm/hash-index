@@ -48,4 +48,9 @@ impl Index {
         let fpointer: u32 = self.hash_table.get(kmer);
         // TODO: determine wheter we want to ask the csv for all the information?
     }
+
+    /// TODO
+    pub fn finish() {
+
+    }
 }

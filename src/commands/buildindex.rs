@@ -25,11 +25,27 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
         .delimiter(b',')
         .from_reader(io::stdin());
 
-    let mut ftable = FunctionalTable::new();
+    let mut conflict_table = ConflictTable::new(1);
 
-    let mut hash_table = ConflictTable::new(1);
-
+    // Build the conflict table first
     for record in reader.deserialize() {
+        let (kmer, _, _): (String, u32, String) = record?;
+
+        conflict_table.insert(&Kmer::from(kmer));
+    }
+
+    conflict_table.finish();
+
+    // Functional table has the same amount as entries, as the conflict stack
+    let mut ftable = FunctionalTable::new(conflict_table.get_amount_of_kmers());
+
+    let mut reader2 = csv::ReaderBuilder::new()
+        .has_headers(true)
+        .delimiter(b',')
+        .from_path("data/test.csv")?;
+
+    // Then build the functional table using the ids of the conflict table
+    for record in reader2.deserialize() {
         let (kmer, lca, uids): (String, u32, String) = record?;
 
         let uids_vec: Vec<UniprotId> = uids
@@ -37,26 +53,13 @@ pub fn buildindex(_args: BuildIndexArgs) -> Result<()> {
             .map(|s| UniprotId::new(s.trim().parse().unwrap()))
             .collect();
 
-        let ftable_index = ftable.insert(1, &uids_vec);
-
-        // println!("{}", ftable_index);
-
-        // TODO: lca is the taxonomic information
-        // TODO: ftable_index is the function pointer
-        // TODO: hash(kmer)
-
-        hash_table.insert(&Kmer::from(kmer));
+        ftable.insert(conflict_table.get(&Kmer::from(kmer))? as usize, lca, &uids_vec);
     }
 
-    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAAA")));
-
-    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAACA")));
-
-    println!("{:?}", hash_table.get(&Kmer::from("AAAAAAAGA")));
-
-    println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAACA")));
-
-    println!("{:?}", hash_table.contains(&Kmer::from("AAAAAAAGA")));
+    match conflict_table.get(&Kmer::from("AAAAAAAFA")) {
+        Ok(id) => println!("{:?}", ftable.get(id as usize)),
+        Err(_) => bail!("LOL")
+    }
 
     Ok(())
 }

@@ -114,6 +114,8 @@ impl ConflictTable {
                 self.buckets[i] = first_conflict_index + 1;
             }
         }
+
+        self.stack.clear();
     }
 
     /// TODO
@@ -123,15 +125,15 @@ impl ConflictTable {
 
     /// Logarithmic search for conflicts
     fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
-        let mut lower: i32 = 0;
-        //let mut upper: i32 = self.stack[first_conflict_index].len() as i32 - 1;
-        let mut upper: i32 = (self.flattened_stack[first_conflict_index] >> 45) as i32;
+        let mut lower: i32 = first_conflict_index as i32;
+        let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32;
 
         while lower <= upper {
             let middle: i32 = (lower + upper) / 2;
-            if self.stack[first_conflict_index][middle as usize] < kmer.0 {
+            let stack_item = self.flattened_stack[middle as usize] & 0x00001FFFFFFFFFFF;
+            if stack_item < kmer.0 {
                 lower = middle + 1;
-            } else if self.stack[first_conflict_index][middle as usize] > kmer.0 {
+            } else if stack_item > kmer.0 {
                 upper = middle - 1;
             } else {
                 return Ok((first_conflict_index as i32 + middle) as u32);

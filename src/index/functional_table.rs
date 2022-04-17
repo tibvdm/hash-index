@@ -1,5 +1,9 @@
 //! TODO: Serialized Functional data table
 
+use std::fs::File;
+use std::io::Write;
+
+use crate::errors::Result;
 use crate::serialization::Serialize;
 use crate::serialization::uniprot_id::UniprotId;
 
@@ -28,10 +32,10 @@ impl FunctionalTable {
     /// TODO: -> Result
     pub fn insert(&mut self, i: usize, lca: u32, functional_data: &Vec<UniprotId>) {
         // Store LCA in the first 32 bits of the serialized information stream
-        self.serialized_entries[i].push((lca >> 24) as u8);
-        self.serialized_entries[i].push((lca >> 16) as u8);
+        self.serialized_entries[i].push((lca >> 0)  as u8);
         self.serialized_entries[i].push((lca >> 8)  as u8);
-        self.serialized_entries[i].push( lca        as u8);
+        self.serialized_entries[i].push((lca >> 16) as u8);
+        self.serialized_entries[i].push((lca >> 24) as u8);
 
         // Store all functional components
         for uid in functional_data {
@@ -44,5 +48,16 @@ impl FunctionalTable {
     /// TODO: error handling
     pub fn get(&self, functional_pointer: usize) -> &Vec<u8> {
         &self.serialized_entries[functional_pointer]
+    }
+
+    /// TODO: saving the functional table
+    pub fn to_csv(&self, file_path: String) -> Result<()> {
+        let mut file = File::create("test")?;
+
+        for entry in self.serialized_entries.iter() {
+            file.write_all(&entry)?;
+        }
+
+        Ok(())
     }
 }

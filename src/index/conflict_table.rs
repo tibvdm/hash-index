@@ -33,7 +33,7 @@ impl ConflictTable {
     }
 
     /// Insert a kmer in the conflict table, returns the bucket and number of conflict
-    pub fn insert(&mut self, kmer: &Kmer) -> (usize, usize) {
+    pub fn insert(&mut self, kmer: &Kmer) {
         let bucket: usize = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
 
         // The bucket contains the position of the first conflict
@@ -63,8 +63,6 @@ impl ConflictTable {
             // Add the new conflict to the list
             self.stack[first_conflict_index].push(entry);
         }
-
-        return (bucket, self.stack[first_conflict_index].len() - 1);
     }
 
     /// Get the value for a k-mer
@@ -72,12 +70,8 @@ impl ConflictTable {
         // Calculate the bucket of this k-mer
         let bucket = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
 
-        println!("bucket: {}", bucket);
-
         // Retrieve the position of the first conflict
         let first_conflict_index: usize = self.buckets[bucket] as usize - 1;
-
-        println!("fci: {}", first_conflict_index);
 
         // Perform a logarithmic search to find the correct entry
         self.log_search(kmer, first_conflict_index)
@@ -114,9 +108,7 @@ impl ConflictTable {
             }
         }
 
-        println!("buckets: {:?}", self.buckets);
-        println!("stack: {:?}", self.stack);
-        println!("flattened stack: {:?}", self.flattened_stack);
+        //println!("{:?}", self.flattened_stack);
 
         self.stack.clear();
     }
@@ -131,14 +123,10 @@ impl ConflictTable {
         let mut lower: i32 = first_conflict_index as i32;
         let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32;
 
-        println!("lower: {}", lower);
-        println!("upper: {}", upper);
-
         while lower <= upper {
             let middle: i32 = (lower + upper) / 2;
-            println!("middle: {}", middle);
             let stack_item = self.flattened_stack[middle as usize] & 0x00001FFFFFFFFFFF;
-            println!("stack item: {}", stack_item);
+
             if stack_item < kmer.0 {
                 lower = middle + 1;
             } else if stack_item > kmer.0 {

@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::Write;
 
 use crate::index::functional_table::FunctionalTable;
+use crate::index::lca_table::LcaTable;
 use crate::index::conflict_table::ConflictTable;
 use crate::serialization::uniprot_id::UniprotId;
 
@@ -45,7 +46,8 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
     println!("conflict table finished");
 
     // Functional table has the same amount as entries, as the conflict stack
-    let mut ftable = FunctionalTable::new(conflict_table.get_amount_of_kmers());
+    let mut function_table = FunctionalTable::new(conflict_table.get_amount_of_kmers());
+    let mut lca_table = LcaTable::new(conflict_table.get_amount_of_kmers());
 
     let mut reader2 = csv::ReaderBuilder::new()
         .has_headers(true)
@@ -71,7 +73,8 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
             }
         };
 
-        ftable.insert(fpointer, lca, &uids_vec);
+        function_table.insert(fpointer, &uids_vec);
+        lca_table.insert(fpointer, lca);
     }
 
     println!("second for loop finished");
@@ -84,15 +87,23 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     file1.write_all(&encoded1);
 
-    println!("to csv finished");
+    println!("ftable to file finished");
 
-    let encoded: Vec<u8> = bincode::serialize(&conflict_table).unwrap();
+    let encoded2: Vec<u8> = bincode::serialize(&conflict_table).unwrap();
 
-    let mut file = File::create("results/hash.bin")?;
+    let mut file2 = File::create("results/hash.bin")?;
 
-    file.write_all(&encoded);
+    file2.write_all(&encoded2);
 
-    println!("encoded finished");
+    println!("hash table to file finished");
+
+    let encoded3: Vec<u8> = bincode::serialize(&lca_table).unwrap();
+
+    let mut file3 = File::create("results/lca.bin")?;
+
+    file3.write_all(&encoded3);
+
+    println!("lca table to file finished");
 
     // match conflict_table.get(&Kmer::from("AAAAAAAAA")) {
     //     Ok(id) => println!("{:?}", ftable.get(id as usize)),

@@ -32,14 +32,7 @@ impl FunctionalTable {
     }
 
     /// TODO: -> Result
-    pub fn insert(&mut self, i: usize, lca: u32, functional_data: &Vec<UniprotId>) {
-        // Store LCA in the first 32 bits of the serialized information stream
-        self.serialized_entries[i].push((lca >> 0)  as u8);
-        self.serialized_entries[i].push((lca >> 8)  as u8);
-        self.serialized_entries[i].push((lca >> 16) as u8);
-        self.serialized_entries[i].push((lca >> 24) as u8);
-
-        // Store all functional components
+    pub fn insert(&mut self, i: usize, functional_data: &Vec<UniprotId>) {
         for uid in functional_data {
             for byte in uid.serialize() {
                 self.serialized_entries[i].push(byte);

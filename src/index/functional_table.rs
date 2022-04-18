@@ -2,9 +2,10 @@
 
 use std::fs::File;
 use std::io::Write;
+use serde::{Serialize, Deserialize};
 
 use crate::errors::Result;
-use crate::serialization::Serialize;
+use crate::serialization::Serializer;
 use crate::serialization::uniprot_id::UniprotId;
 
 // TODO
@@ -16,6 +17,7 @@ use crate::serialization::uniprot_id::UniprotId;
 // OF: byte als character naar csv
 
 /// TODO
+#[derive(Serialize, Deserialize)]
 pub struct FunctionalTable {
     /// TODO
     pub serialized_entries: Vec<Vec<u8>>
@@ -51,8 +53,8 @@ impl FunctionalTable {
     }
 
     /// TODO: saving the functional table
-    pub fn to_csv(&self, file_path: String) -> Result<()> {
-        let mut file = File::create("test")?;
+    pub fn to_bin(&self, file_path: String) -> Result<()> {
+        let mut file = File::create(file_path)?;
 
         for entry in self.serialized_entries.iter() {
             file.write_all(&entry)?;
@@ -60,4 +62,9 @@ impl FunctionalTable {
 
         Ok(())
     }
+
+//    /// TODO
+//    pub fn from_bin(&self, file_path: String) -> FunctionalTable {
+//        
+//    }
 }

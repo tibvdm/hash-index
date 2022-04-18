@@ -1,6 +1,6 @@
 //! TODO
 
-use crate::serialization::Serialize;
+use crate::serialization::Serializer;
 
 /// TODO
 #[derive(Clone, PartialEq, Debug)]
@@ -18,7 +18,7 @@ impl UniprotId {
     }
 }
 
-impl Serialize for UniprotId {
+impl Serializer for UniprotId {
     type Output = Vec<u8>;
 
     /// TODO

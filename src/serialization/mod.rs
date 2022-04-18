@@ -1,7 +1,7 @@
 //! TODO
 
 /// TODO
-pub trait Serialize {
+pub trait Serializer {
     /// TODO
     type Output;
 

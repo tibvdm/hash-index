@@ -3,6 +3,7 @@
 use crate::kmer::Kmer;
 
 /// Struct for an FNV Hasher
+#[derive(Clone, Copy)]
 pub struct Fnv1aHasher32();
 
 impl Fnv1aHasher32 {
@@ -46,5 +47,11 @@ impl Fnv1aHasher32 {
         hashed_value = hashed_value.wrapping_mul(0x01000193);
 
         hashed_value
+    }
+}
+
+impl Default for Fnv1aHasher32 {
+    fn default() -> Self {
+        Fnv1aHasher32()
     }
 }

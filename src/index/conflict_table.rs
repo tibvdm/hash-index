@@ -1,5 +1,7 @@
 //! Implementation of a ConflictTable
 
+use serde::{Serialize, Deserialize};
+
 use crate::hash::fnv_1a_hash::Fnv1aHasher32;
 use crate::kmer::Kmer;
 use crate::errors::Result;
@@ -7,14 +9,17 @@ use crate::errors::Result;
 // TODO: Hasher could be static in this case
 
 /// A hash table with uniformly distributed conflicts
+#[derive(Serialize, Deserialize)]
 pub struct ConflictTable {
     /// The hash function to determine the correct bucket
+    #[serde(skip_serializing, skip_deserializing)]
     hasher: Fnv1aHasher32,
     /// The amount of buckets
     amount_of_buckets: usize,
     /// The buckets
     buckets: Vec<u32>,
     /// The storage for all the conflicts
+    #[serde(skip_serializing, skip_deserializing)]
     stack: Vec<Vec<u64>>,
     /// TODO: Split in builder and table
     flattened_stack: Vec<u64>

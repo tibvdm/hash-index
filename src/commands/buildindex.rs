@@ -1,6 +1,8 @@
 //! Command to build the index structure
 
 use std::io;
+use std::fs::File;
+use std::io::Write;
 
 use crate::index::functional_table::FunctionalTable;
 use crate::index::conflict_table::ConflictTable;
@@ -74,9 +76,23 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     println!("second for loop finished");
 
-    ftable.to_csv("test.out.csv".to_string());
+    // ftable.to_bin("results/test.bin".to_string());
+
+    let encoded1: Vec<u8> = bincode::serialize(&ftable).unwrap();
+
+    let mut file1 = File::create("results/function.bin")?;
+
+    file1.write_all(&encoded1);
 
     println!("to csv finished");
+
+    let encoded: Vec<u8> = bincode::serialize(&conflict_table).unwrap();
+
+    let mut file = File::create("results/hash.bin")?;
+
+    file.write_all(&encoded);
+
+    println!("encoded finished");
 
     // match conflict_table.get(&Kmer::from("AAAAAAAAA")) {
     //     Ok(id) => println!("{:?}", ftable.get(id as usize)),

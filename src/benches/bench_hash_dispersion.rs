@@ -4,6 +4,7 @@ use crate::kmer;
 use crate::kmer::Kmer;
 use crate::errors::Result;
 use crate::hash::fnv_1a_hash::Fnv1aHasher32;
+//use crate::hash::xxhash::Xxh32Hasher;
 
 /// Arguments to build an index
 #[derive(Debug, StructOpt)]

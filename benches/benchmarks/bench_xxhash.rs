@@ -3,16 +3,16 @@
 use criterion::{criterion_group, Criterion};
 use core::time::Duration;
 
-use hash_index::hash::fnv_1a_hash::Fnv1aHasher32;
+use hash_index::hash::xxhash::Xxh32Hasher;
 use hash_index::kmer::Kmer;
 use hash_index::kmer;
 
 /// Benchmark a hash function
 fn bench_hash(kmers: &Vec<Kmer>) {
-    let hasher = Fnv1aHasher32();
+    let hasher = Xxh32Hasher();
 
     for kmer in kmers {
-        hasher.hash_optimized(kmer);
+        hasher.hash(kmer);
     }
 }
 
@@ -20,7 +20,7 @@ fn bench_hash(kmers: &Vec<Kmer>) {
 fn bench(c: &mut Criterion) {
     let kmers: Vec<Kmer> = kmer::generate_kmers(1_000_000);
 
-    c.bench_function("bench_fnv_hash",
+    c.bench_function("bench_xxh32_hash",
         |b| b.iter_with_setup(|| kmers.to_vec(), |kmers| bench_hash(&kmers))
     );
 }

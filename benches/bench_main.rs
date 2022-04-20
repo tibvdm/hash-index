@@ -4,4 +4,5 @@ mod benchmarks;
 
 criterion_main! {
     benchmarks::bench_hash::benches,
+    benchmarks::bench_xxhash::benches,
 }

@@ -81,7 +81,7 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     // ftable.to_bin("results/test.bin".to_string());
 
-    let encoded1: Vec<u8> = bincode::serialize(&ftable).unwrap();
+    let encoded1: Vec<u8> = bincode::serialize(&function_table).unwrap();
 
     let mut file1 = File::create("results/function.bin")?;
 

@@ -22,7 +22,11 @@ pub struct BenchHashConflictsArgs {
 
     /// Conflicts depth to consider
     #[structopt(short = "d", long = "depth", default_value = "16")]
-    pub conflict_depth: usize
+    pub conflict_depth: usize,
+
+    /// Conflicts depth to consider
+    #[structopt(short = "v", long = "verbose")]
+    pub verbose: bool
 }
 
 /// Implements the bench_hash_conflicts command
@@ -33,7 +37,11 @@ pub fn bench_hash_conflicts(args: BenchHashConflictsArgs) -> Result<()> {
 
     let mut conflicts = vec![0; args.conflict_depth];
 
-    for _i in 0 .. args.amount_of_iterations {
+    for i in 0 .. args.amount_of_iterations {
+        if args.verbose && (i % (args.amount_of_iterations / 10) == 0) {
+            eprintln!("{}", i);
+        }
+
         let kmers: Vec<Kmer> = kmer::generate_kmers(args.amount_of_kmers);
 
         for kmer in kmers {

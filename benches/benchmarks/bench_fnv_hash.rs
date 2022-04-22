@@ -12,7 +12,7 @@ fn bench_hash(kmers: &Vec<Kmer>) {
     let hasher = Fnv1aHasher32();
 
     for kmer in kmers {
-        hasher.hash_optimized(kmer);
+        hasher.hash(kmer);
     }
 }
 

@@ -9,14 +9,6 @@ use crate::errors::Result;
 use crate::serialization::Serializer;
 use crate::serialization::uniprot_id::UniprotId;
 
-// TODO
-
-// TODO: Serialize uniprot ids to bytestring
-// TODO: Write this string to a file 
-
-// TODO: eerst zonder serialization
-// OF: byte als character naar csv
-
 /// TODO
 #[derive(Serialize, Deserialize)]
 pub struct LcaTable {

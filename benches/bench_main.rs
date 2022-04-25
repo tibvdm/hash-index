@@ -9,5 +9,6 @@ criterion_main! {
     //benchmarks::bench_kmer_hash::benches,
 
     //benchmarks::bench_conflict_table::benches,
-    benchmarks::bench_conflict_lca::benches
+    //benchmarks::bench_conflict_lca::benches,
+    benchmarks::bench_fst::benches,
 }

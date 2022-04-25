@@ -7,3 +7,4 @@ pub mod bench_xxhash;
 
 pub mod bench_conflict_table;
 pub mod bench_conflict_lca;
+pub mod bench_fst;

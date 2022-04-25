@@ -1,5 +1,8 @@
 //! Implementation of a ConflictTable
 
+use std::fs;
+use std::fs::File;
+use std::io::Write;
 use serde::{Serialize, Deserialize};
 
 use crate::hash::fnv_1a_hash::Fnv1aHasher32;
@@ -123,10 +126,28 @@ impl ConflictTable {
         self.flattened_stack.len()
     }
 
+    /// TODO: saving the functional table
+    pub fn to_bin(&self, file_path: String) -> Result<()> {
+        let mut file = File::create(file_path)?;
+
+        let encoded: Vec<u8> = bincode::serialize(self).unwrap();
+
+        file.write_all(&encoded);
+
+        Ok(())
+    }
+
+    /// TODO
+    pub fn from_bin(file_path: String) -> ConflictTable {
+        let encoded = fs::read(file_path).expect("Unable to read file");
+
+        bincode::deserialize(&encoded[..]).unwrap()
+    }
+
     /// Logarithmic search for conflicts
     fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
         let mut lower: i32 = first_conflict_index as i32;
-        let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32;
+        let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32 - 1;
 
         while lower <= upper {
             let middle: i32 = (lower + upper) / 2;

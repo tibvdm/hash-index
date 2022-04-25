@@ -1,5 +1,6 @@
 //! TODO: Serialized Functional data table
 
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 use serde::{Serialize, Deserialize};
@@ -52,8 +53,10 @@ impl LcaTable {
         Ok(())
     }
 
-//    /// TODO
-//    pub fn from_bin(&self, file_path: String) -> FunctionalTable {
-//        
-//    }
+    /// TODO
+    pub fn from_bin(file_path: String) -> LcaTable {
+        let encoded = fs::read(file_path).expect("Unable to read file");
+
+        bincode::deserialize(&encoded[..]).unwrap()
+    }
 }

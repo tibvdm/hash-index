@@ -9,6 +9,7 @@ use hash_index::errors::Result;
 quick_main!(|| -> Result<()> {
     match Opt::from_args() {
         Opt::BuildIndex(args) => commands::buildindex::buildindex(args),
+        Opt::LoadIndex(args) => commands::loadindex::loadindex(args),
 
         Opt::BenchHashDispersion(args) => benches::bench_hash_dispersion::bench_hash_dispersion(args),
         Opt::BenchHashDispersionSwissprot(args) => benches::bench_hash_dispersion_swissprot::bench_hash_dispersion_swissprot(args),
@@ -22,6 +23,7 @@ quick_main!(|| -> Result<()> {
 #[derive(Debug, StructOpt)]
 pub enum Opt {
     #[structopt(name = "buildindex")] BuildIndex(commands::buildindex::BuildIndexArgs),
+    #[structopt(name = "loadindex")] LoadIndex(commands::loadindex::LoadIndexArgs),
 
     #[structopt(name = "bench_hash_dispersion")] BenchHashDispersion(benches::bench_hash_dispersion::BenchHashDispersionArgs),
     #[structopt(name = "bench_hash_dispersion_swissprot")] BenchHashDispersionSwissprot(benches::bench_hash_dispersion_swissprot::BenchHashDispersionSwissprotArgs),

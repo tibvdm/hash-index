@@ -21,7 +21,7 @@ use crate::serialization::uniprot_id::UniprotId;
 #[derive(Serialize, Deserialize)]
 pub struct FunctionalTable {
     /// TODO
-    pub serialized_entries: Vec<Vec<u8>>
+    pub serialized_entries: Vec<Vec<u32>>
 }
 
 impl FunctionalTable {
@@ -35,14 +35,15 @@ impl FunctionalTable {
     /// TODO: -> Result
     pub fn insert(&mut self, i: usize, functional_data: &Vec<UniprotId>) {
         for uid in functional_data {
-            for byte in uid.serialize() {
-                self.serialized_entries[i].push(byte);
-            }
+            self.serialized_entries[i].push(uid.id)
+            //for byte in uid.serialize() {
+            //    self.serialized_entries[i].push(byte);
+            //}
         }
     }
 
     /// TODO: error handling
-    pub fn get(&self, functional_pointer: usize) -> &Vec<u8> {
+    pub fn get(&self, functional_pointer: usize) -> &Vec<u32> {
         &self.serialized_entries[functional_pointer]
     }
 

@@ -41,16 +41,16 @@ impl LcaTable {
         self.entries[lca_pointer]
     }
 
-//    /// TODO: saving the functional table
-//    pub fn to_bin(&self, file_path: String) -> Result<()> {
-//        let mut file = File::create(file_path)?;
-//
-//        for entry in self.serialized_entries.iter() {
-//            file.write_all(&entry)?;
-//        }
-//
-//        Ok(())
-//    }
+    /// TODO: saving the functional table
+    pub fn to_bin(&self, file_path: String) -> Result<()> {
+        let mut file = File::create(file_path)?;
+
+        let encoded: Vec<u8> = bincode::serialize(self).unwrap();
+
+        file.write_all(&encoded);
+
+        Ok(())
+    }
 
 //    /// TODO
 //    pub fn from_bin(&self, file_path: String) -> FunctionalTable {

@@ -49,9 +49,9 @@ impl FunctionalTable {
     pub fn to_bin(&self, file_path: String) -> Result<()> {
         let mut file = File::create(file_path)?;
 
-        for entry in self.serialized_entries.iter() {
-            file.write_all(&entry)?;
-        }
+        let encoded: Vec<u8> = bincode::serialize(self).unwrap();
+
+        file.write_all(&encoded);
 
         Ok(())
     }

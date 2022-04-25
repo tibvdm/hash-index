@@ -79,13 +79,7 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     println!("second for loop finished");
 
-    // ftable.to_bin("results/test.bin".to_string());
-
-    let encoded1: Vec<u8> = bincode::serialize(&function_table).unwrap();
-
-    let mut file1 = File::create("results/function.bin")?;
-
-    file1.write_all(&encoded1);
+    function_table.to_bin("results/function.bin".to_string());
 
     println!("ftable to file finished");
 
@@ -97,11 +91,7 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     println!("hash table to file finished");
 
-    let encoded3: Vec<u8> = bincode::serialize(&lca_table).unwrap();
-
-    let mut file3 = File::create("results/lca.bin")?;
-
-    file3.write_all(&encoded3);
+    lca_table.to_bin("results/lca.bin".to_string());
 
     println!("lca table to file finished");
 

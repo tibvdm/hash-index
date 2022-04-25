@@ -149,17 +149,19 @@ impl ConflictTable {
         let mut lower: i32 = first_conflict_index as i32;
         let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32 - 1;
 
-        while lower <= upper {
-            let middle: i32 = (lower + upper) / 2;
+        while lower != upper {
+            let middle: i32 = ((lower + upper) as f64 / 2.0).ceil() as i32;
             let stack_item = self.flattened_stack[middle as usize] & 0x00001FFFFFFFFFFF;
 
-            if stack_item < kmer.0 {
-                lower = middle + 1;
-            } else if stack_item > kmer.0 {
+            if stack_item > kmer.0 {
                 upper = middle - 1;
             } else {
-                return Ok(middle as u32);
+                lower = middle;
             }
+        }
+
+        if self.flattened_stack[lower as usize] & 0x00001FFFFFFFFFFF == kmer.0 {
+            return Ok(lower as u32);
         }
 
         bail!("Entry not found")

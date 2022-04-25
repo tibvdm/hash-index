@@ -26,7 +26,7 @@ pub struct BuildIndexArgs {
 /// Implements the buildindex command
 pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
     let mut reader = csv::ReaderBuilder::new()
-        .has_headers(false)
+        .has_headers(true)
         .delimiter(b',')
         .from_reader(io::stdin());
 
@@ -50,9 +50,9 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
     let mut lca_table = LcaTable::new(conflict_table.get_amount_of_kmers());
 
     let mut reader2 = csv::ReaderBuilder::new()
-        .has_headers(false)
+        .has_headers(true)
         .delimiter(b',')
-        .from_path("data/in.csv")?;
+        .from_path("data/test.csv")?;
 
     // Then build the functional table using the ids of the conflict table
     for record in reader2.deserialize() {

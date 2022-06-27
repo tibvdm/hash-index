@@ -12,8 +12,8 @@ use hash_index::kmer;
 fn bench_conflict_lca(conflict_table: &ConflictTable, lca_table: &LcaTable, kmers: &Vec<Kmer>) {
     for kmer in kmers {
         match conflict_table.get(kmer) {
-            Ok(id) => lca_table.get(id as usize),
-            Err(_) => 0
+            Some(id) => lca_table.get(id as usize),
+            None => 0
         };
     }
 }

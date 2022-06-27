@@ -74,9 +74,13 @@ impl ConflictTable {
     }
 
     /// Get the value for a k-mer
-    pub fn get(&self, kmer: &Kmer) -> Result<u32> {
+    pub fn get(&self, kmer: &Kmer) -> Option<u32> {
         // Calculate the bucket of this k-mer
         let bucket = (self.hasher.hash(kmer) % self.amount_of_buckets as u32) as usize;
+
+        if self.buckets[bucket] == 0 {
+            return None;
+        }
 
         // Retrieve the position of the first conflict
         let first_conflict_index: usize = self.buckets[bucket] as usize - 1;
@@ -88,8 +92,8 @@ impl ConflictTable {
     /// Check if a k-mer is contained in the index
     pub fn contains(&self, kmer: &Kmer) -> bool {
         match self.get(kmer) {
-            Ok(_)  => true,
-            Err(_) => false
+            Some(_)  => true,
+            None => false
         }
     }
 
@@ -145,12 +149,12 @@ impl ConflictTable {
     }
 
     /// Logarithmic search for conflicts
-    fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Result<u32> {
-        let mut lower: i32 = first_conflict_index as i32;
-        let mut upper: i32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as i32 - 1;
+    fn log_search(&self, kmer: &Kmer, first_conflict_index: usize) -> Option<u32> {
+        let mut lower: u32 = first_conflict_index as u32;
+        let mut upper: u32 = lower + (self.flattened_stack[first_conflict_index] >> 45) as u32 - 1;
 
         while lower != upper {
-            let middle: i32 = ((lower + upper) as f64 / 2.0).ceil() as i32;
+            let middle: u32 = (lower + upper + 1) / 2;
             let stack_item = self.flattened_stack[middle as usize] & 0x00001FFFFFFFFFFF;
 
             if stack_item > kmer.0 {
@@ -161,9 +165,9 @@ impl ConflictTable {
         }
 
         if self.flattened_stack[lower as usize] & 0x00001FFFFFFFFFFF == kmer.0 {
-            return Ok(lower as u32);
+            return Some(lower as u32);
         }
 
-        bail!("Entry not found")
+        None
     }
 }

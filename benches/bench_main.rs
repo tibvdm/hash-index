@@ -10,5 +10,5 @@ criterion_main! {
 
     benchmarks::bench_conflict_table::benches,
     //benchmarks::bench_conflict_lca::benches,
-    //benchmarks::bench_fst::benches,
+    benchmarks::bench_fst::benches,
 }

@@ -26,7 +26,7 @@ pub struct BuildIndexArgs {
 /// Implements the buildindex command
 pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
     let mut reader = csv::ReaderBuilder::new()
-        .has_headers(true)
+        .has_headers(false)
         .delimiter(b',')
         .from_reader(io::stdin());
 
@@ -50,9 +50,9 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
     let mut lca_table = LcaTable::new(conflict_table.get_amount_of_kmers());
 
     let mut reader2 = csv::ReaderBuilder::new()
-        .has_headers(true)
+        .has_headers(false)
         .delimiter(b',')
-        .from_path("data/test.csv")?;
+        .from_path("data/in_min.csv")?;
 
     // Then build the functional table using the ids of the conflict table
     for record in reader2.deserialize() {
@@ -66,8 +66,8 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
             .collect();
 
         let fpointer = match conflict_table.get(&Kmer::from(kmer.clone())) {
-            Ok(i) => i as usize,
-            Err(_) => {
+            Some(i) => i as usize,
+            None => {
                 println!("{}", kmer.clone());
                 bail!("sdfs")
             }
@@ -91,40 +91,40 @@ pub fn buildindex(args: BuildIndexArgs) -> Result<()> {
 
     println!("lca table to file finished");
 
-    match conflict_table.get(&Kmer::from("AAAAAAAAA")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAAAC")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAAAD")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAAAE")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAAAF")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAACA")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
-
-    match conflict_table.get(&Kmer::from("AAAAAAAFA")) {
-        Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
-        Err(_) => println!("LOL")
-    }
+    //match conflict_table.get(&Kmer::from("AAAAAAAAA")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAAAC")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAAAD")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAAAE")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAAAF")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAACA")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
+//
+    //match conflict_table.get(&Kmer::from("AAAAAAAFA")) {
+    //    Ok(id) => println!("lca: {:?}, functions: {:?}", lca_table.get(id as usize), function_table.get(id as usize)),
+    //    Err(_) => println!("LOL")
+    //}
 
     Ok(())
 }

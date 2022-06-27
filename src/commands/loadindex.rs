@@ -26,18 +26,33 @@ pub struct LoadIndexArgs {
 
 /// Implements the buildindex command
 pub fn loadindex(args: LoadIndexArgs) -> Result<()> {
-    let mut conflict_table: ConflictTable = ConflictTable::new(1_000);
+    let mut conflict_table: ConflictTable = ConflictTable::from_bin("results/hash.bin".to_string());
+    let mut lca_table: LcaTable = LcaTable::from_bin("results/lca.bin".to_string());
+    let mut function_table: FunctionalTable = FunctionalTable::from_bin("results/function.bin".to_string());
 
-    let kmers: Vec<Kmer> = kmer::generate_kmers(1_000_000);
+    println!("ok");
 
-    for kmer in kmers.iter() {
-        conflict_table.insert(&kmer);
+    let mut reader = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .delimiter(b',')
+        .from_reader(io::stdin());
+
+    for record in reader.deserialize() {
+        let (kmer, _, _): (String, u32, String) = record?;
+
+        conflict_table.insert(&Kmer::from(kmer.clone()));
     }
 
-    conflict_table.finish();
+    let kmers: Vec<Kmer> = kmer::generate_kmers(100_000_000);
+
+    //for kmer in kmers.iter() {
+    //    conflict_table.insert(&kmer);
+    //}
+//
+    //conflict_table.finish();
 
     for kmer in kmers.iter() {
-        conflict_table.get(&kmer);
+        let fpointer = conflict_table.get(&kmer);
     }
 
 
